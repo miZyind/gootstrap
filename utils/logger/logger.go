@@ -30,14 +30,19 @@ func printNs(namespace string, context ...interface{}) {
 	)
 }
 
-// Boot will return colorized message with Bootstrapper namespace
+// Boot ...
 func Boot(message string, context ...interface{}) {
-	namespace := "Bootstrapper"
+	namespace := "Boot"
 	if context == nil {
 		printNs(namespace, green.Sprint(message))
 	} else {
 		printNs(namespace, green.Sprintf("%s:", message), cyan.Sprint(context...))
 	}
+}
+
+// Router ...
+func Router(name, path string) {
+	printNs("Router", green.Sprintf("%s binded:", name), cyan.Sprint(path))
 }
 
 // Log ...
