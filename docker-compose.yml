@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  db:
+    container_name: gs-db
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: 'gootstrap'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - 3310:3306
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+    command:
+      - 'mysqld'
+      - '--character-set-server=utf8mb4'
+      - '--collation-server=utf8mb4_unicode_ci'
+      - '--skip-character-set-client-handshake'
