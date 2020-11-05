@@ -8,49 +8,37 @@ import (
 )
 
 var (
-	green = color.New(color.FgGreen)
-	cyan  = color.New(color.FgCyan)
+	yellow = color.New(color.FgYellow).SprintFunc()
+	green  = color.New(color.FgGreen).SprintFunc()
+	cyan   = color.New(color.FgCyan).SprintFunc()
 )
 
-func print(context ...interface{}) {
-	fmt.Println(
-		append(
-			[]interface{}{green.Sprint(time.Now().Format("2006-01-02 15:04:05"))},
-			context...,
-		)...,
-	)
+func print(namespace string, context ...interface{}) {
+	timestamp := green(time.Now().Format("2006-01-02 15:04:05"))
+	namespace = yellow(namespace)
+	prefix := fmt.Sprintf("%s [%s]", timestamp, namespace)
+	context = append([]interface{}{prefix}, context...)
+
+	fmt.Println(context...)
 }
 
-func printNs(namespace string, context ...interface{}) {
-	print(
-		append(
-			[]interface{}{color.YellowString("[%s]", namespace)},
-			context...,
-		)...,
-	)
-}
-
-// Boot ...
 func Boot(message string, context ...interface{}) {
-	namespace := "Boot"
 	if context == nil {
-		printNs(namespace, green.Sprint(message))
+		context = []interface{}{green(message)}
 	} else {
-		printNs(namespace, green.Sprintf("%s:", message), cyan.Sprint(context...))
+		context = []interface{}{
+			green(fmt.Sprintf("%s:", message)),
+			cyan(context...),
+		}
 	}
+
+	print("Boot", context...)
 }
 
-// Router ...
-func Router(name, path string) {
-	printNs("Router", green.Sprintf("%s binded:", name), cyan.Sprint(path))
-}
+func InitRouter(name, path string) {
+	prefix := green(fmt.Sprintf("%s bound {", name))
+	middle := cyan(path)
+	suffix := green("}:")
 
-// Log ...
-func Log(context ...interface{}) {
-	print(context...)
-}
-
-// LogNs ...
-func LogNs(namespace string, context ...interface{}) {
-	printNs(namespace, context...)
+	print("Router", prefix+middle+suffix)
 }

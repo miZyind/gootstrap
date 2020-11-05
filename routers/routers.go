@@ -9,29 +9,30 @@ import (
 	"github.com/mizyind/gootstrap/utils/logger"
 )
 
-// Router ...
 type Router interface {
-	Bind(r *gin.RouterGroup) string
+	BindRoutes(g *gin.RouterGroup) string
+}
+
+type RouterInfo struct {
+	path   string
+	router Router
 }
 
 var (
-	routersV1 = []Router{
-		&v1.TodoRouter{},
-		&v1.UserRouter{},
+	routersV1 = []RouterInfo{
+		{path: "todos", router: &v1.Todo{}},
+		{path: "users", router: &v1.User{}},
 	}
 )
 
-func bindRoutersToGroup(group *gin.RouterGroup, routers []Router) {
-	for _, router := range routers {
-		path := router.Bind(group)
-		logger.Router(
-			reflect.Indirect(reflect.ValueOf(router)).Type().Name(),
-			path,
-		)
+func initRouters(group *gin.RouterGroup, routerInfo []RouterInfo) {
+	for _, info := range routerInfo {
+		name := reflect.TypeOf(info.router).Elem().Name()
+		path := info.router.BindRoutes(group.Group(info.path))
+		logger.InitRouter(name, path)
 	}
 }
 
-// Init ...
 func Init(mode string) *gin.Engine {
 	gin.SetMode(mode)
 
@@ -39,7 +40,7 @@ func Init(mode string) *gin.Engine {
 
 	routers.Use(gin.Recovery())
 
-	bindRoutersToGroup(routers.Group("api/v1"), routersV1)
+	initRouters(routers.Group("api/v1"), routersV1)
 
 	return routers
 }

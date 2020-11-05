@@ -2,16 +2,12 @@ package v1
 
 import "github.com/gin-gonic/gin"
 
-// TodoRouter ...
-type TodoRouter struct{}
+type Todo struct{}
 
-// Bind ...
-func (*TodoRouter) Bind(group *gin.RouterGroup) string {
-	group = group.Group("todos")
-
-	group.GET("/", func(c *gin.Context) {
+func (*Todo) BindRoutes(g *gin.RouterGroup) string {
+	g.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "todos"})
 	})
 
-	return group.BasePath()
+	return g.BasePath()
 }
