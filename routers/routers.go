@@ -2,6 +2,7 @@ package routers
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -19,6 +20,7 @@ type RouterInfo struct {
 }
 
 var (
+	engine    *gin.Engine
 	routersV1 = []RouterInfo{
 		{path: "todos", router: &v1.Todo{}},
 		{path: "users", router: &v1.User{}},
@@ -29,18 +31,27 @@ func initRouters(group *gin.RouterGroup, routerInfo []RouterInfo) {
 	for _, info := range routerInfo {
 		name := reflect.TypeOf(info.router).Elem().Name()
 		path := info.router.BindRoutes(group.Group(info.path))
+
 		logger.InitRouter(name, path)
+
+		for _, route := range engine.Routes() {
+			if strings.Contains(route.Path, path) {
+				logger.BindRoute(route.Method, route.Path)
+			}
+		}
 	}
 }
 
 func Init(mode string) *gin.Engine {
 	gin.SetMode(mode)
 
-	routers := gin.New()
+	engine = gin.New()
 
-	routers.Use(gin.Recovery())
+	engine.Use(gin.Recovery())
 
-	initRouters(routers.Group("api/v1"), routersV1)
+	api := engine.Group("api")
 
-	return routers
+	initRouters(api.Group("v1"), routersV1)
+
+	return engine
 }
