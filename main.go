@@ -20,8 +20,9 @@ var (
 func init() {
 	logger.Boot("Starting application...")
 
-	configs.InitViper()
-	logger.Boot("Viper initialized")
+	if configs.LoadEnv() {
+		logger.Boot("Env loaded from .env")
+	}
 
 	serverConfig = configs.InitServerConfig()
 	logger.Boot("Server config initialized", serverConfig)

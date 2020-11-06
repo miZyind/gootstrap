@@ -2,9 +2,10 @@ package configs
 
 import "github.com/spf13/viper"
 
-// InitViper ...
-func InitViper() {
+// LoadEnv ...
+func LoadEnv() bool {
 	viper.AutomaticEnv()
 	viper.SetConfigFile(".env")
-	viper.ReadInConfig()
+
+	return viper.ReadInConfig() == nil
 }
