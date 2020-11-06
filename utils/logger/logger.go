@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/fatih/color"
@@ -13,20 +14,21 @@ var (
 	cyan   = color.New(color.FgCyan).SprintFunc()
 )
 
-func print(namespace string, context ...interface{}) {
-	timestamp := green(time.Now().Format("2006-01-02 15:04:05"))
-	namespace = yellow("[" + namespace + "]")
-	context = append([]interface{}{timestamp + " " + namespace}, context...)
+func print(ns string, context ...interface{}) {
+	ts := green(time.Now().Format("2006-01-02 15:04:05"))
+	ns = yellow("[" + ns + "]")
+	context = append([]interface{}{ts + " " + ns}, context...)
 
 	fmt.Println(context...)
 }
 
-func Boot(message string, context ...interface{}) {
+// Bootstrapper prints formatted and colorized messages with "Bootstrapper" namespace
+func Bootstrapper(msg string, context ...interface{}) {
 	if context == nil {
-		context = []interface{}{green(message)}
+		context = []interface{}{green(msg)}
 	} else {
 		context = []interface{}{
-			green(message + ":"),
+			green(msg + ":"),
 			cyan(context...),
 		}
 	}
@@ -34,15 +36,26 @@ func Boot(message string, context ...interface{}) {
 	print("Bootstrapper", context...)
 }
 
-func InitRouter(name, path string) {
-	prefix := green(name + " initialized {")
+// Config prints formatted and colorized messages with "Config" namespace
+func Config(config interface{}) {
+	name := reflect.TypeOf(config).Elem().Name()
+
+	print("Config", green(name+" loaded:"), cyan(config))
+}
+
+// Router prints formatted and colorized messages with "Router" namespace
+func Router(router interface{}, path string) {
+	ns := "Router"
+	name := reflect.TypeOf(router).Elem().Name()
+	prefix := green(name + ns + " initialized {")
 	middle := cyan(path)
 	suffix := green("}:")
 
-	print("Router", prefix+middle+suffix)
+	print(ns, prefix+middle+suffix)
 }
 
-func BindRoute(method, route string) {
+// Route prints formatted and colorized messages with "Route" namespace
+func Route(method, route string) {
 	switch method {
 	case "GET":
 		method = color.HiCyanString(method)
@@ -58,7 +71,9 @@ func BindRoute(method, route string) {
 		method = color.HiMagentaString(method)
 	}
 
-	route = fmt.Sprintf("%s - %s", cyan(route), method)
+	prefix := green("Bound {")
+	middle := fmt.Sprintf("%s - %s", cyan(route), method)
+	suffix := green("}")
 
-	print("Route", green("Bound {")+route+green("}"))
+	print("Route", prefix+middle+suffix)
 }

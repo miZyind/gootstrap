@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// ServerConfig ...
+// A ServerConfig defines parameters for running an HTTP server
 type ServerConfig struct {
 	Mode         string
 	Addr         string
@@ -14,9 +14,11 @@ type ServerConfig struct {
 	WriteTimeout time.Duration
 }
 
-// InitServerConfig ...
-func InitServerConfig() *ServerConfig {
-	return &ServerConfig{
+// Server represents server config instance
+var Server *ServerConfig
+
+func initServerConfig() {
+	Server = &ServerConfig{
 		Mode:         viper.GetString("SERVER_MODE"),
 		Addr:         viper.GetString("SERVER_ADDR"),
 		ReadTimeout:  viper.GetDuration("SERVER_READ_TIMEOUT"),

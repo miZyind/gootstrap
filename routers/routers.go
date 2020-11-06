@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"reflect"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -10,38 +9,36 @@ import (
 	"github.com/mizyind/gootstrap/utils/logger"
 )
 
-type Router interface {
-	BindRoutes(g *gin.RouterGroup) string
-}
-
-type RouterInfo struct {
-	path   string
-	router Router
+type router struct {
+	path     string
+	instance interface {
+		BindRoutes(g *gin.RouterGroup) string
+	}
 }
 
 var (
 	engine    *gin.Engine
-	routersV1 = []RouterInfo{
-		{path: "todos", router: &v1.Todo{}},
-		{path: "users", router: &v1.User{}},
+	routersV1 = []router{
+		{path: "todos", instance: &v1.Todo{}},
+		{path: "users", instance: &v1.User{}},
 	}
 )
 
-func initRouters(group *gin.RouterGroup, routerInfo []RouterInfo) {
-	for _, info := range routerInfo {
-		name := reflect.TypeOf(info.router).Elem().Name()
-		path := info.router.BindRoutes(group.Group(info.path))
+func initRouters(g *gin.RouterGroup, routers []router) {
+	for _, r := range routers {
+		path := r.instance.BindRoutes(g.Group(r.path))
 
-		logger.InitRouter(name, path)
+		logger.Router(r.instance, path)
 
 		for _, route := range engine.Routes() {
 			if strings.Contains(route.Path, path) {
-				logger.BindRoute(route.Method, route.Path)
+				logger.Route(route.Method, route.Path)
 			}
 		}
 	}
 }
 
+// Init returns a Gin engine with pre-defined routers
 func Init(mode string) *gin.Engine {
 	gin.SetMode(mode)
 
