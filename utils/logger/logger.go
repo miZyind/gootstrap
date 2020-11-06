@@ -35,7 +35,7 @@ func Boot(message string, context ...interface{}) {
 }
 
 func InitRouter(name, path string) {
-	prefix := green(name + "Router initialized {")
+	prefix := green(name + " initialized {")
 	middle := cyan(path)
 	suffix := green("}:")
 
