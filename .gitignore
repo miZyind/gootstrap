@@ -12,3 +12,5 @@
 .env
 # Docker
 volumes
+# Misc
+.DS_Store
