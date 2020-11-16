@@ -1,7 +1,6 @@
 # gootstrap
 
-[![Go](https://img.shields.io/badge/1.15-00add8?style=for-the-badge&logo=go&logoColor=fff)](https://golang.org)
-[![License](https://img.shields.io/badge/mit-000?style=for-the-badge)](https://github.com/miZyind/gootstrap/blob/master/LICENSE)
+[![Go](https://img.shields.io/github/go-mod/go-version/mizyind/gootstrap?style=for-the-badge&label=&color=00add8&logo=go&logoColor=fff)](https://golang.org)
 
 A Go practice project.
 
