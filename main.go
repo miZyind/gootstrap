@@ -9,11 +9,12 @@ import (
 )
 
 func main() {
+	gin := routers.Init(configs.Server.Mode)
 	server := &http.Server{
 		Addr:         configs.Server.Addr,
-		Handler:      routers.Init(configs.Server.Mode),
 		ReadTimeout:  configs.Server.ReadTimeout,
 		WriteTimeout: configs.Server.WriteTimeout,
+		Handler:      gin,
 	}
 
 	// TODO: Configurable Protocol
