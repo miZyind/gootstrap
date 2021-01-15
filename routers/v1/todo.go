@@ -2,14 +2,17 @@ package v1
 
 import "github.com/gin-gonic/gin"
 
-// Todo represents a virtual router struct
-type Todo struct{}
+func addTodoRoutes(v1 *gin.RouterGroup) {
+	group := v1.Group("todos")
 
-// BindRoutes registers routes to a router group and returns base path
-func (*Todo) BindRoutes(group *gin.RouterGroup) string {
-	group.Any("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "todos"})
-	})
+	group.GET("/", getTodos)
+}
 
-	return group.BasePath()
+// @security JWT
+// @summary Get todos
+// @200 Success
+// @400 There is no todo
+// @500 Unknown error
+func getTodos(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "todos"})
 }
