@@ -1,9 +1,9 @@
-package v1
+package v2
 
 import "github.com/gin-gonic/gin"
 
-func addTodoRoutes(v1 *gin.RouterGroup) {
-	group := v1.Group("todos")
+func addTodoRoutes(root *gin.RouterGroup) {
+	group := root.Group("todos")
 
 	group.GET("/", getTodos)
 }

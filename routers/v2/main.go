@@ -1,10 +1,10 @@
-package v1
+package v2
 
 import "github.com/gin-gonic/gin"
 
 // @Info
 // @title My API
-// @version 1.0.0
+// @version 2.0.0
 // @description This is a sample server celler server.
 
 // @Security
@@ -15,8 +15,7 @@ import "github.com/gin-gonic/gin"
 
 // InitRouters will bind all defined routers
 func InitRouters(api *gin.RouterGroup) {
-	root := api.Group("v1")
+	root := api.Group("v2")
 
 	addTodoRoutes(root)
-	addUserRoutes(root)
 }

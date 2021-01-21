@@ -6,30 +6,33 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mizyind/gootstrap/configs"
 	v1 "github.com/mizyind/gootstrap/routers/v1"
+	v2 "github.com/mizyind/gootstrap/routers/v2"
 	"github.com/mizyind/gootstrap/utils/logger"
-	"github.com/mizyind/gootstrap/utils/saunter"
+	"github.com/mizyind/saunter"
 )
 
-func initGinEngine() *gin.Engine {
+func main() {
 	gin.SetMode(configs.Server.Mode)
 
 	engine := gin.New()
+	basePath := "/api"
+	root := engine.Group(basePath)
 
-	v1.InitRouters(engine.Group("api"))
+	v1.InitRouters(root)
+	v2.InitRouters(root)
+
+	saunter.Initialize(basePath, engine.Routes())
 
 	engine.Use(gin.Recovery())
-	engine.GET("/api/v1", saunter.Handler(engine.Routes()))
+	engine.GET("/api/v1", saunter.Handler())
+	engine.GET("/api/v2", saunter.Handler())
 	engine.StaticFS("/swagger-static", saunter.Static())
 
-	return engine
-}
-
-func main() {
 	server := &http.Server{
 		Addr:         configs.Server.Addr,
 		ReadTimeout:  configs.Server.ReadTimeout,
 		WriteTimeout: configs.Server.WriteTimeout,
-		Handler:      initGinEngine(),
+		Handler:      engine,
 	}
 
 	// TODO: Configurable Protocol
